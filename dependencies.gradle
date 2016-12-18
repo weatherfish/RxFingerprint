@@ -17,23 +17,23 @@
 ext.versions = [
         // Version
         code                   : 1,
-        name                   : '1.1.1',
+        name                   : '1.2.2',
 
         // Android Versions
         compileSdk             : 24,
         targetSdk              : 24,
         minSdk                 : 15,
-        buildTools             : '24.0.1',
+        buildTools             : '24.0.3',
 
         // Gradle Versions
-        androidGradlePlugin    : '2.2.0-beta2',
+        androidGradlePlugin    : '2.2.1',
         retrolambdaGradlePlugin: '3.2.5',
         mavenGradlePlugin      : '1.4.1',
         bintrayGradlePlugin    : '1.7.1',
 
         // Dependency Versions
         supportLibrary         : '24.2.0',
-        rxJava                 : '1.1.9',
+        rxJava                 : '1.2.1',
 
         // Testing dependencies
         jUnit : '4.12',

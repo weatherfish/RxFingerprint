@@ -16,83 +16,81 @@
 
 package com.mtramin.rxfingerprint;
 
-import android.support.annotation.NonNull;
-import android.util.Base64;
-
 /**
  * Data of a cryptographic operation with RxFingerprint.
  */
 class CryptoData {
-    private static final String SEPARATOR = "-_-";
+	static final String SEPARATOR = "-_-";
+
+	private final EncodingProvider encodingProvider;
 
     private final String messageEncoded;
     private final String ivEncoded;
 
-    private CryptoData(byte[] messageBytes, byte[] ivBytes) {
-        this.messageEncoded = encode(messageBytes);
-        this.ivEncoded = encode(ivBytes);
+    private CryptoData(EncodingProvider encodingProvider, byte[] messageBytes, byte[] ivBytes) {
+		this.encodingProvider = encodingProvider;
+		messageEncoded = encodingProvider.encode(messageBytes);
+		ivEncoded = encodingProvider.encode(ivBytes);
     }
 
-    private CryptoData(String message, String iv) {
-        this.messageEncoded = message;
-        this.ivEncoded = iv;
-    }
-
-    /**
-     * Sets up data from an input string.
-     *
-     * @param input input string that was previously encrypted by RxFingerprint
-     * @return parsed data
-     */
-    static CryptoData fromString(String input) {
-        if (input == null) {
-            throw new NullPointerException("Input for decryption is null. Make sure to provide a valid, encrypted String for decryption.");
-        }
-
-        if (input.isEmpty() || !input.contains(SEPARATOR)) {
-            throw new IllegalArgumentException("Invalid input given for decryption operation. Make sure you provide a string that was previously encrypted by RxFingerprint.");
-        }
-
-        String[] inputParams = input.split(SEPARATOR);
-        return new CryptoData(inputParams[0], inputParams[1]);
+    private CryptoData(EncodingProvider encodingProvider, String message, String iv) {
+		this.encodingProvider = encodingProvider;
+		messageEncoded = message;
+		ivEncoded = iv;
     }
 
     /**
-     * Sets up data from encrypted byte that resulted from encryption operation.
-     *
-     * @param messageBytes encrypted bytes of message
-     * @param ivBytes      initialization vector in bytes
-     * @return parsed data
-     */
-    static CryptoData fromBytes(byte[] messageBytes, byte[] ivBytes) {
-        return new CryptoData(messageBytes, ivBytes);
-    }
+	 * Sets up data from an input string.
+	 *
+	 * @param input input string that was previously encrypted by RxFingerprint
+	 * @return parsed data
+	 */
+	static CryptoData fromString(EncodingProvider encodingProvider, String input) throws CryptoDataException {
+		verifyCryptoDataString(input);
+
+		String[] inputParams = input.split(SEPARATOR);
+		return new CryptoData(encodingProvider, inputParams[0], inputParams[1]);
+	}
+
+	/**
+	 * Sets up data from encrypted byte that resulted from encryption operation.
+	 *
+	 * @param messageBytes encrypted bytes of message
+	 * @param ivBytes      initialization vector in bytes
+	 * @return parsed data
+	 */
+	static CryptoData fromBytes(EncodingProvider encodingProviders, byte[] messageBytes, byte[] ivBytes) {
+		return new CryptoData(encodingProviders, messageBytes, ivBytes);
+	}
+
+	/**
+	 * Checks if the given input is a valid encrypted string. Will throw an exception if the input
+	 * is invalid.
+	 *
+	 * @param input input to verify
+	 */
+	static void verifyCryptoDataString(String input) throws CryptoDataException {
+		if (input.isEmpty() || !input.contains(SEPARATOR)) {
+			throw CryptoDataException.fromCryptoDataString(input);
+		}
+	}
 
     @Override
     public String toString() {
-        return this.messageEncoded + SEPARATOR + this.ivEncoded;
+        return messageEncoded + SEPARATOR + ivEncoded;
     }
 
     /**
      * @return initialization vector of the crypto operation
      */
      byte[] getIv() {
-        return decode(ivEncoded);
+        return encodingProvider.decode(ivEncoded);
     }
 
     /**
      * @return message of the crypto operation
      */
      byte[] getMessage() {
-        return decode(messageEncoded);
-    }
-
-     byte[] decode(String messageEncoded) {
-        return Base64.decode(messageEncoded, Base64.DEFAULT);
-    }
-
-    @NonNull
-    private String encode(byte[] messageBytes) {
-        return Base64.encodeToString(messageBytes, Base64.DEFAULT);
+        return encodingProvider.decode(messageEncoded);
     }
 }
