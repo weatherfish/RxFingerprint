@@ -17,13 +17,13 @@
 ext.versions = [
         // Version
         code                   : 1,
-        name                   : '2.0.1',
+        name                   : '2.0.3',
 
         // Android Versions
-        compileSdk             : 24,
-        targetSdk              : 24,
+        compileSdk             : 25,
+        targetSdk              : 25,
         minSdk                 : 15,
-        buildTools             : '24.0.3',
+        buildTools             : '25.0.1',
 
         // Gradle Versions
         androidGradlePlugin    : '2.2.1',
@@ -32,7 +32,7 @@ ext.versions = [
         bintrayGradlePlugin    : '1.7.1',
 
         // Dependency Versions
-        supportLibrary         : '24.2.0',
+        supportLibrary         : '25.1.1',
         rxJava                 : '2.0.1',
 
         // Testing dependencies

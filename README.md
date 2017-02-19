@@ -17,7 +17,7 @@ see [Encryption/Decryption](#encryption-and-decryption).
 To use RxFingerprint in your project, add the library as a dependency in your `build.gradle` file:
 ```groovy
 dependencies {
-    compile 'com.mtramin:rxfingerprint:2.0.1'
+    compile 'com.mtramin:rxfingerprint:2.0.3'
 }
 ```
 
@@ -58,7 +58,7 @@ Should the device not contain a fingerprint sensor or the user has not enrolled 
 After successful authentication or a recoverable error (e.g. the sensor could not read the fingerprint clearly) `onNext` will be called. You can check the result if the authentication was successful.
 In the case of a recoverable error it provides the error message.
 
-By unsubscribing from the Subscription, the fingerprint sensor will be disabled again with no result.
+By disposing the `Disposable`, the fingerprint sensor will be disabled again with no result.
 
 ### Encryption-and-decryption
 
@@ -116,6 +116,8 @@ Disposable disposable = RxFingerprint.decrypt(this, encryptedString)
 Be aware that all encryption keys will be invalidated once the user changes his lockscreen or changes his enrolled fingerprints. If you receive an `onError` event
 during decryption check if the keys were invalidated with `RxFingerprint.keyInvalidated(Throwable)` and prompt the user to authenticate and encrypt his data again.
 
+Once the encryption keys are invalidated RxFingerprint will delete and renew the keys in the Android Keystore on the next call to `RxFingerprint.encrypt(...)`. 
+
 ### Best-practices
 
 To prevent errors and ensure a good user experience, make sure to think of these cases:
@@ -137,7 +139,7 @@ After the encryption step all results will be Base64 encoded for easier transpor
 RxFingerprint brings the following dependencies:
 
 - RxJava2
-- AppCompat-v7 to allow for backwards compability (which will just do nothing)
+- Android Support Annotations
 
 ## Bugs and Feedback
 
